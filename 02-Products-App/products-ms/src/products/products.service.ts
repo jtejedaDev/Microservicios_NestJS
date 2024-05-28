@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
@@ -14,13 +14,14 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     this.logger.log(`Database connected`);
   }
   
+  //metodo para crear un producto en la db SQLite
   create(createProductDto: CreateProductDto) {
     return this.product.create({
       data: createProductDto
     });
-
   }
 
+  //Metodo de busqueda de registros.
   async findAll( paginationDto : PaginationDto ) {
     const  { page, limit } = paginationDto;
     const totalPages = await this.product.count();
@@ -39,8 +40,17 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  
+  async findOne(id: number) {
+    const product = await this.product.findFirst({
+      where:{id},
+    })
+
+    if( !product ){
+      throw new NotFoundException(`Product with id #${ id } not found`)
+    }
+
+    return product;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
