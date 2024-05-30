@@ -1,0 +1,3 @@
+#instalarlo en nuestro cliente-Gateway
+npm i --save @nestjs/microservices
+
