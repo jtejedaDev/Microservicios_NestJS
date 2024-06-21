@@ -13,6 +13,13 @@ async function bootstrap() {
     }
   });
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist:true,
+      forbidNonWhitelisted:true,
+    }),
+  );
+
 
   
   const logger = new Logger('OrdersMS-Main');
